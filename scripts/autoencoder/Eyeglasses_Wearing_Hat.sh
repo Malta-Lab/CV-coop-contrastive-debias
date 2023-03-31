@@ -1,0 +1,29 @@
+export CUDA_DEVICE_ORDER=PCI_BUS_ID
+
+python train_autoencoder.py \
+--classifier resnet \
+--autoencoder old \
+--feat_layer layer1 \
+--batch_size 40 \
+--dataset celeba \
+--dataset_path ./datasets/ \
+--transform 220-180 \
+--lr 1e-3 \
+--epoch 100 \
+--early_stop 15 \
+--gpu 0 \
+--load_path_cl ./checkpoints/classifier/09-03_Eyeglasses_Wearing_Hat_bp0.05/cl_best_model.ckpt \
+--load_path_ae ./checkpoints/rec_ae/rec_old_ae_celeba_180_220_1e-4.ckpt \
+--centroid_path ./centroid_celeba/09-03_Eyeglasses_Wearing_Hat_CENT_layer1 \
+--name 09-03_Eyeglasses_Wearing_Hat_bp0.05_centroid \
+--temperature 0.5 \
+--alpha 0.5 \
+--theta 0.5 \
+--recon 0 \
+--rec_epoch 0 \
+--target Eyeglasses \
+--bias Wearing_Hat \
+--seed 42 \
+--contrast centroid \
+--bias_prop 0.05 \
+--is_biased True \
