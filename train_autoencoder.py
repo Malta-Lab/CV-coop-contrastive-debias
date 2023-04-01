@@ -16,7 +16,6 @@ from loaders import CelebA, build_dali_loader, get_dali_loaders
 from models.autoencoder import get_autoencoder
 from models.classifier import get_classifier
 from losses import ReconstructionContrastiveLoss
-from losses.centroid_contrastive import CentroidContrastiveLoss
 from losses import ReconstructionLoss
 from utils.general import set_seeds, get_dataset
 from utils import define_weight, rec_ae_train
@@ -38,12 +37,10 @@ def get_args():
     parser.add_argument('--gpu',            default='-1', help='GPU number')
     parser.add_argument('--load_path_cl',   default='./checkpoints/celeba/', type=str, help='Path to load the classifier.')
     parser.add_argument('--load_path_ae',   default='None', type=str, help='Path to load the autoencoder.')
-    parser.add_argument('--centroid_path',  default='None', type=str, help='Path to load the centroids.')
     parser.add_argument('--name',           default='test', help='Run name on Tensorboard.')
     parser.add_argument('--temperature',    default=0.5, type=float, help='Temperature for the Contrastive loss')
     parser.add_argument('--alpha',          default=1, type=float, help='Weight for the class loss')
     parser.add_argument('--theta',          default=1, type=float, help='Weight for the feature loss')
-    parser.add_argument('--contrast',       default='batch', choices=['batch', 'centroid'], type=str, help='Contrastive loss type')
     parser.add_argument('--recon',          default=0.5, type=float, help='Weight for the reconstruction loss')
     parser.add_argument('--rec_epoch',      default=3, type=int, help='Number of epochs to use the reconstruction loss')
     parser.add_argument('--dyn',            default=False, action='store_true', help='Use dynamic contrastive loss')
@@ -88,18 +85,8 @@ def iter(
     features, pred = classifier(x=unbiased, output_features=True, layer=feat_layer)
 
     #getting features from the biased input classifier
-    if args.contrast == 'batch':
-        with torch.no_grad():
-            gt_features, _ = classifier(x=images, output_features=True, layer=feat_layer)
-    
-    if args.contrast == 'centroid':
-        cent_0 = torch.load(f'{args.centroid_path}/centroid_0{args.feat_layer}.pt')         
-        cent_1 = torch.load(f'{args.centroid_path}/centroid_1{args.feat_layer}.pt')
-        #cat tensors
-        cent_0 = torch.cat(cent_0, dim=0).to(device)
-        cent_1 = torch.cat(cent_1, dim=0).to(device)
-        
-        gt_features = [cent_0, cent_1] 
+    with torch.no_grad():
+        gt_features, _ = classifier(x=images, output_features=True, layer=feat_layer)
     
     #getting criterions and calculating losses
     criterion_class, criterion_features, criterion_rec = criterions 
@@ -126,15 +113,22 @@ if __name__ == "__main__":
     print(f'Starting script. Name: {args.name}')
     set_seeds(args.seed)
     
-    #if no pre-trained autoencoder for reconstruction is found, train one
-    if args.load_path_ae in [None, 'None']:
+    #get rec_only autoencoder or train one
+    if args.load_path_ae not in [None, 'None']:
+        print('pre-trained autoencoder defined on args, loading pre-trained autoencoder for reconstruction')
+        rec_ae_path = args.load_path_ae
+            
+    else:
+        check_file=f'/checkpoints/rec_ae/{args.target}_{args.bias}_bp{args.bias_prop}/rec_only_model.ckpt'
+        if os.path.isfile(check_file):
+            print(f'pre-trained autoencoder found on {check_file}, loading pre-trained autoencoder for reconstruction')
+            rec_ae_path=f'/checkpoints/rec_ae/{args.target}_{args.bias}_bp{args.bias_prop}/rec_only_model.ckpt'
+            
+        #if no pre-trained autoencoder for reconstruction is found, train one
         print ('pre-trained autoencoder not found, training autoencoder for reconstruction only')
         rec_ae_path = rec_ae_train(args=args)
-        
-    else:
-        rec_ae_path = args.load_path_ae
 
-    board = Tensorboard(args.name, f'./runs_paper_ae/{args.name}', delete=True)  
+    board = Tensorboard(args.name, f'./runs_ae/{args.name}', delete=True)  
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f'Using device: {device}')
 
@@ -185,18 +179,11 @@ if __name__ == "__main__":
     print(f'Using dynamic loss: {args.dyn}')
     print(f'Using reconstruction loss: {args.recon} till epoch {args.rec_epoch}')
     print(f'Using Learning Rate: {args.lr}')
-    print(f'Using contrastive loss: {args.contrast}')
     print(f'Contrastive loss using features from {args.feat_layer}')
 
     optimizer = optim.Adam(autoencoder.parameters(), lr = args.lr)
     criterion_class = nn.CrossEntropyLoss()
-    if args.contrast == 'batch':
-        criterion_features = ReconstructionContrastiveLoss()
-    if args.contrast == 'centroid':
-        criterion_features = CentroidContrastiveLoss()
-    else:
-        print('Contrastive loss error, must be batch or centroid')
-        exit()
+    criterion_features = ReconstructionContrastiveLoss()
     criterion_recon = ReconstructionLoss(nn.MSELoss())
     criterions = [criterion_class, criterion_features, criterion_recon]
 

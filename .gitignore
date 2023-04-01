@@ -7,3 +7,5 @@ checkpoints/
 
 __pycache__
 __pycache__/
+scripts/centroids
+scripts/rec_ae

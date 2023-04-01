@@ -165,10 +165,10 @@ def rec_ae_train(args):
             print('Best epoch. Valid loss:', epoch_loss, 'Saving model...')  
             early_stop = 0
             best_loss = epoch_loss                      
-            model_path = './checkpoints/rec_ae/'
+            model_path = f'./checkpoints/rec_ae/{args.target}_{args.bias}_bp{args.bias_prop}'
             if not os.path.exists(model_path):
                 os.makedirs(model_path)
-            rec_ae_path = f'{model_path}{args.name}.ckpt'
+            rec_ae_path = f'{model_path}/rec_only_model.ckpt'
 
             torch.save(autoencoder.state_dict(), rec_ae_path)
 
