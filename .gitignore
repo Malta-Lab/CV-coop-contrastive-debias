@@ -3,6 +3,8 @@ datasets/celeba/img_align_celeba
 img_align_celeba.zip
 old/
 runs/
+runs_ae/
+runs_rec_ae/
 checkpoints/
 
 __pycache__

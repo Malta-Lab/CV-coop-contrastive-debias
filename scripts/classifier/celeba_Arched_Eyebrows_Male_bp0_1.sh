@@ -12,7 +12,7 @@ python train_classifier.py \
 --epoch 100 \
 --early_stop 15 \
 --gpu 1 \
---name 27-02_Arched_Eyebrows_Male_bp0.1 \
+--name 27-02_Arched_Eyebrows_Male_bp0_1 \
 --seed 42 \
 --bias_prop 0.1 \
 --is_biased True

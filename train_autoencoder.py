@@ -113,16 +113,22 @@ if __name__ == "__main__":
     print(f'Starting script. Name: {args.name}')
     set_seeds(args.seed)
     
+    #replace dot with underscore in the name
+    bias_prop = str(args.bias_prop).replace('.','_')
+    print(f'bias_prop: {bias_prop}')
+    exit()
+    
     #get rec_only autoencoder or train one
     if args.load_path_ae not in [None, 'None']:
         print('pre-trained autoencoder defined on args, loading pre-trained autoencoder for reconstruction')
         rec_ae_path = args.load_path_ae
             
     else:
-        check_file=f'/checkpoints/rec_ae/{args.target}_{args.bias}_bp{args.bias_prop}/rec_only_model.ckpt'
+        
+        check_file=f'/checkpoints/rec_ae/{args.target}_{args.bias}_bp{bias_prop}/rec_only_model.ckpt'
         if os.path.isfile(check_file):
             print(f'pre-trained autoencoder found on {check_file}, loading pre-trained autoencoder for reconstruction')
-            rec_ae_path=f'/checkpoints/rec_ae/{args.target}_{args.bias}_bp{args.bias_prop}/rec_only_model.ckpt'
+            rec_ae_path=f'/checkpoints/rec_ae/{args.target}_{args.bias}_bp{bias_prop}/rec_only_model.ckpt'
             
         #if no pre-trained autoencoder for reconstruction is found, train one
         print ('pre-trained autoencoder not found, training autoencoder for reconstruction only')
