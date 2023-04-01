@@ -15,4 +15,4 @@ python train_classifier.py \
 --name 27-02_Arched_Eyebrows_Male_bp0.1 \
 --seed 42 \
 --bias_prop 0.1 \
---is_biased True \
+--is_biased True

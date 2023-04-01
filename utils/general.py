@@ -29,7 +29,7 @@ def get_dataset(args, split:str, is_biased:str, bias_prop:float) -> Dataset:
             bias_prop=bias_prop,
             seed = args.seed,
             attributes_path = os.path.join(args.dataset_path, 'celeba', 'list_attr_celeba.csv'),
-            download = True
+            download = False
         )
     
     if args.dataset == 'utkface':

@@ -1,3 +1,9 @@
 .vscode
 datasets/celeba/img_align_celeba
 img_align_celeba.zip
+old/
+runs/
+checkpoints/
+
+__pycache__
+__pycache__/

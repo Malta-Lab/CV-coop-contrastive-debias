@@ -12,7 +12,7 @@ python train_classifier.py \
 --epoch 100 \
 --early_stop 15 \
 --gpu 1 \
---name 03-03_Bald_Eyeglasses_bp0.05 \
+--name 31-03_Bald_Eyeglasses_bp0.1 \
 --seed 42 \
---bias_prop 0.05 \
+--bias_prop 0.1 \
 --is_biased True \

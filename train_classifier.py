@@ -85,7 +85,7 @@ if __name__ == "__main__":
     print(f'Starting script. Name: {args.name}')
     set_seeds(args.seed)
 
-    board = Tensorboard(args.name, f'./runs_paper/{args.name}', delete=True)  
+    board = Tensorboard(args.name, f'./runs/{args.name}', delete=True)  
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device {device}")
 
