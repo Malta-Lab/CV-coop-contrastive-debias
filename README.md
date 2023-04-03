@@ -22,6 +22,8 @@ conda create --name advsbias --file conda-requirements.txt
 conda activate advsbias
 conda install pip
 pip install -r pip-requirements.txt
+pip uninstall torch
+pip3 install torch torchvision torchaudio
 ```
 ### Downloading Dataset
 * Go to the CelebA website and follow the instructions to download the aligned dataset. The img_align_celeba.zip is the only file that must be downloaded, and should be placed in the './datasets/celeba' folder. Then, from the same folder,run the following command to unzip the file:
