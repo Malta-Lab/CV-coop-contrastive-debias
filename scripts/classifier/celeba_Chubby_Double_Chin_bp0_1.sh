@@ -5,14 +5,14 @@ python train_classifier.py \
 --batch_size 192 \
 --dataset celeba \
 --dataset_path ./datasets/ \
---target Bald \
---bias Eyeglasses \
+--target Chubby \
+--bias Double_Chin \
 --transform 220-180 \
 --lr 1e-4 \
 --epoch 100 \
 --early_stop 15 \
---gpu 1 \
---name 31-03_Bald_Eyeglasses_bp0.1 \
+--gpu 2 \
+--name Chubby_Double_Chin_bp0_1 \
 --seed 42 \
 --bias_prop 0.1 \
---is_biased True \
+--is_biased True

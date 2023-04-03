@@ -16,7 +16,6 @@ from loaders import CelebA, build_dali_loader, get_dali_loaders, UTKface
 from models.classifier import get_classifier
 from utils.general import set_seeds, get_dataset
 
-
 def get_args():
     parser = argparse.ArgumentParser(description='Parameters for classifier train')
 
